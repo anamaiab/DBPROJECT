@@ -5,9 +5,6 @@
  */
 package trabalhobd;
 
-import java.sql.Connection;
-
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -26,11 +23,11 @@ public class TrabalhoBD {
      * @param args the command line arguments
 	 * @throws SQLException 
      */
-    public static int main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException {
     	
     	String user = "M9763151";
     	String pass = "mk21011998*";
-    	String url = "jdbc:oracle:thin:@grad.icmc.usp.br:15215:orcl";
+    	String url = "jdbc:oracle:thin:@192.168.183.15:1521:orcl";
     	Statement stmt; 
         
     	//objeto que reliza conecao
@@ -39,11 +36,11 @@ public class TrabalhoBD {
         
         //verifica se conexao foi estabelecida
         if(stmt != null) {
-        	System.out.println("Usuario " + user + "conectado em " + url);
+        	System.out.println("Usuario " + user + " conectado em " + url + "\n");
         }
         else {
-        	System.out.println("Conexao nao pode ser estabelecida");
-        	return -1;
+        	System.out.println("Conexao nao pode ser estabelecida.");
+        	return;
         }
          
         //MENU
@@ -77,9 +74,10 @@ public class TrabalhoBD {
                     	  a = 0;
                       }else{
                           //sair
-                          System.out.println("Saindo...");
                           conexao.close();
-                          return 0;
+                          ler.close();
+                          System.out.println("Sessao finalizada");
+                          return;
                       }
             	 }
                  
@@ -101,15 +99,15 @@ public class TrabalhoBD {
 			          int op = ler.nextInt();
 			          
 			          switch(op){
-			              case 1: //apenas um teste, por isso numa classe dps
-			            	  ResultSet rs = stmt.executeQuery("SELECT owner, table_name FROM dba_tables");
-			            	  ResultSetMetaData rsmd = rs.getMetaData();
-			            	  int columnsNumber = rsmd.getColumnCount();
+			              case 1: //listar todas as tabelas
+			            	  //TODO Listar apenas tabelas pertinentes ao escopo de confraternizacao
+			            	  ResultSet rs = stmt.executeQuery("SELECT table_name, owner FROM all_tables WHERE owner= '" + user + "' ORDER BY owner, table_name");			            	
 			            	  while (rs.next()) {
-			            		    for(int i = 1; i < columnsNumber; i++)
-			            		        System.out.print(rs.getString(i) + " ");
+			            		    System.out.print(rs.getString(1) + " ");
 			            		    System.out.println();
 			            		}
+			            	  System.out.println();
+
 			            	  rs.close();
 			                  break;
 			              case 2:
@@ -128,9 +126,10 @@ public class TrabalhoBD {
 			            	  a = 0;
 			              case 7:
 			                  //sair
-			                  System.out.println("Saindo...");
 			                  conexao.close();
-			                  return 0;
+			                  ler.close();
+			                  System.out.println("Sessao finalizada.");
+			                  return;
 			          }
             	 }
                  

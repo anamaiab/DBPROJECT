@@ -40,6 +40,7 @@ public class Connect {
 	}
 	
 	public Statement makeConnection() {
+		System.out.println("Conectando...");
 		
 		try {
 			c = DriverManager.getConnection(url, user, pass);
