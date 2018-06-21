@@ -113,6 +113,54 @@ public class TrabalhoBD {
                                           
 			              case 2:
 			                  //consultar
+                                          System.out.println("1-Consultas gerais\n"
+                                                  + "2-Consultas avançacadas");
+                                          int c = ler.nextInt();
+                                          
+                                          switch(c){
+                                              case 1:
+                                                  System.out.println("Digite o nome da tabela que deseja consultar:");
+                                                  String tabelaC = ler.next();
+                                                  tabelaC = tabelaC.toUpperCase();
+                                                  String comandoC = "SELECT * FROM " + tabelaC; 
+                                                  
+                                                  System.out.println("Caso deseje restringir a consulta por alguma condicao, "
+                                                          + "digite-a no formato 'coluna = condicao' (sem aspas). Caso contrario, digite '*'"); 
+                                                  String enter = ler.nextLine();
+                                                  String condicaoC = ler.nextLine();
+                                                  
+                                                  if(!condicaoC.equals("*")) comandoC += " WHERE " + condicaoC;
+                                                  
+                                                  comandoC = comandoC.toUpperCase();
+                                                  
+                                                  try{
+                                                    ResultSet colunas = stmt.executeQuery("SELECT table_name, column_name FROM USER_TAB_COLUMNS WHERE table_name = '" + tabelaC + "'");
+                                                    
+                                                    while(colunas.next()){
+                                                        System.out.print(colunas.getString(2) + "\t\t");
+                                                    }
+                                                    System.out.println("");
+                                                    
+                                                    ResultSet consulta = stmt.executeQuery(comandoC);
+                                                    ResultSetMetaData metadata = consulta.getMetaData();
+                                                    int columnCount = metadata.getColumnCount();
+                                                    
+                                                    while(consulta.next()){
+                                                        for(int i = 1; i <= columnCount; i++)
+                                                            System.out.print(consulta.getString(i) + "\t\t");
+                                                        System.out.println("");
+                                                    }
+                                                    System.out.println("");
+                                                  }catch(SQLException sqle){
+                                                    System.out.println("\nErro ao consultar\n");
+                                                  }
+                                                  
+                                                  break;
+                                                  
+                                              case 2: 
+                                                  break;
+                                          }
+                                          
 			                  break;
 			              case 3:
 			                  //inserir tupla
@@ -122,28 +170,31 @@ public class TrabalhoBD {
                                           
                                           ResultSet colunas = stmt.executeQuery("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tabela + "'");
                                           String comando = new String(); 
-                                          
+                                          String ignorarenter = ler.nextLine();
                                           while(colunas.next()){
                                               System.out.println("Digite o seguinte dado no formato pedido:");
                                               System.out.println(colunas.getString(2) + " " + colunas.getString(3) + " de tamanho " + colunas.getString(4));
                                               
-                                              
                                               if(colunas.getString(3).equals("DATE")){
                                                   System.out.println("Informe a data no formato DD/MM/YYYY");
                                                   String atributo = ler.next();
-                                                  comando += "'" + atributo + "', ";
+                                                  comando += "to_date('" + atributo + "', 'DD/MM/YYYY), ";
                                               } else if(colunas.getString(3).equals("FLOAT")){
                                                   System.out.println("Numeros decimais devem ser inseridos com ponto");
                                                   String atributo = ler.next(); 
                                                   comando += atributo + ", ";
-                                              }else{
+                                              }else if(colunas.getString(3).equals("NUMBER")){
                                                   String atributo = ler.next();
-                                                  comando += "'" + atributo + "', "; 
-                                              } 
+                                                  comando += atributo + ", "; 
+                                              } else{
+                                                  String atributo = ler.nextLine();
+                                                  comando += "'"+ atributo + "', "; 
+                                              }
                                           }
                                           
                                           int tamanho = comando.length();
                                           comando = comando.substring(0, tamanho-2);
+                                          comando = comando.toUpperCase();
                                           //System.out.println(comando);
                                           
                                         try{
@@ -153,11 +204,69 @@ public class TrabalhoBD {
                                             System.out.println("\nErro ao inserir tupla\n");
                                         }
 			                  break;
+                                          
+                                          
 			              case 4:
 			                  //alterar tupla
+                                          
+                                          System.out.println("Digite o nome da tabela onde deseja alterar um dado:");
+                                          String tabelaUp = ler.next();
+                                          tabelaUp = tabelaUp.toUpperCase();
+                                          ResultSet colunasUp = stmt.executeQuery("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tabelaUp + "'");
+                                          String comandoUp = new String(); 
+                                          comandoUp = "UPDATE " + tabelaUp + " SET ";
+                                          
+                                          System.out.println("A tabela " + tabelaUp + " possui as seguintes colunas nos designados formatos:");
+                                          while(colunasUp.next()){
+                                              System.out.println(colunasUp.getString(2) + " " + colunasUp.getString(3) + " de tamanho " + colunasUp.getString(4));
+                                          }
+                                          
+                                          System.out.println("Digite a coluna que será feita a alteração:");
+                                          String colunaUp = ler.next();
+                                          comandoUp += colunaUp + " = ";  
+                                          
+                                          System.out.println("Digite o valor que deseja setar essa coluna:");
+                                          String atributoUp = ler.next();
+                                          comandoUp += atributoUp;
+
+                                          System.out.println("Se houver condicao para a mudanca, insira no formato 'coluna = condicao'. Se nao houver, digite '*':");
+                                          String ignorarEnter = ler.nextLine();
+                                          String condicaoUp = ler.nextLine();
+                                          if(!condicaoUp.equals("*")){
+                                              comandoUp += " WHERE " + condicaoUp; 
+                                          }
+                                          
+                                          comandoUp = comandoUp.toUpperCase();
+                                          System.out.println(comandoUp);
+                                          
+                                          try{
+                                            stmt.executeUpdate(comandoUp);
+                                            System.out.println("\nTupla alterada.\n");
+                                          }catch(SQLException sqle){
+                                            System.out.println("\nErro ao alterar tupla\n");
+                                          }
 			                  break;
 			              case 5:
 			                  //remover tupla
+                                          
+                                          System.out.println("Digite o nome da tabela onde deseja deletar um dado:");
+                                          String tabelaDel = ler.next();
+                                          tabelaDel = tabelaDel.toUpperCase();
+                                          String comandoDel = "DELETE FROM " + tabelaDel; 
+                                          
+                                          System.out.println("Digite a condicao para a remocao no formato 'coluna = condicao' (sem aspas)"); 
+                                          String ignoraEnter = ler.nextLine();
+                                          String condicaoDel = ler.nextLine(); 
+                                          comandoDel += " WHERE " + condicaoDel; 
+                                          comandoDel = comandoDel.toUpperCase();
+                                          
+                                          try{
+                                            stmt.executeUpdate(comandoDel);
+                                            System.out.println("\nTupla removida.\n");
+                                          }catch(SQLException sqle){
+                                            System.out.println("\nErro ao remover tupla\n");
+                                          }
+                                          
 			                  break;
 			              case 6:
 			            	  a = 0;
