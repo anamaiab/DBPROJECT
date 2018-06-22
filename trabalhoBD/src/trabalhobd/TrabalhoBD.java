@@ -170,7 +170,9 @@ public class TrabalhoBD {
                                           
                                           ResultSet colunas = stmt.executeQuery("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tabela + "'");
                                           String comando = new String(); 
-                                          String ignorarenter = ler.nextLine();
+                                          boolean tipoU = true;
+                                          boolean tipoJ = true;
+                                          
                                           while(colunas.next()){
                                               System.out.println("Digite o seguinte dado no formato pedido:");
                                               System.out.println(colunas.getString(2) + " " + colunas.getString(3) + " de tamanho " + colunas.getString(4));
@@ -178,24 +180,47 @@ public class TrabalhoBD {
                                               if(colunas.getString(3).equals("DATE")){
                                                   System.out.println("Informe a data no formato DD/MM/YYYY");
                                                   String atributo = ler.next();
-                                                  comando += "to_date('" + atributo + "', 'DD/MM/YYYY), ";
+                                                  String ignorarenter = ler.nextLine();
+                                                  comando += "to_date('" + atributo + "', 'DD/MM/YYYY'), ";
                                               } else if(colunas.getString(3).equals("FLOAT")){
                                                   System.out.println("Numeros decimais devem ser inseridos com ponto");
+                                                  String atributo = ler.next();
+                                                  String ignorarenter = ler.nextLine();
+                                                  comando += atributo + ", ";
+                                              } else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOU")){
+                                                  System.out.println("Digite o numero 1 caso o convidado seja um universitario ou 0 caso nao seja");
                                                   String atributo = ler.next(); 
+                                                  String ignorarenter = ler.nextLine();
+                                                  if(atributo.equals("1")) tipoU = true;
+                                                  else tipoU = false;
+                                                  comando += atributo + ", ";
+                                              }else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOJ")){
+                                                  System.out.println("Digite o numero 1 caso o convidado seja um jogador ou 0 caso nao seja");
+                                                  String atributo = ler.next();
+                                                  String ignorarenter = ler.nextLine();
+                                                  if(atributo.equals("1")) tipoJ = true;
+                                                  else tipoJ = false;
                                                   comando += atributo + ", ";
                                               }else if(colunas.getString(3).equals("NUMBER")){
                                                   String atributo = ler.next();
-                                                  comando += atributo + ", "; 
+                                                  String ignorarenter = ler.nextLine();
+                                                  comando += atributo + ", ";
                                               } else{
                                                   String atributo = ler.nextLine();
                                                   comando += "'"+ atributo + "', "; 
                                               }
                                           }
                                           
+                                          if(tabela.equals("CONVIDADO") && !(tipoU || tipoJ)){
+                                              System.out.println("Erro ao inserir tupla.\n"
+                                                      + "O convidado precisa ser Jogador ou Universitario\n"); 
+                                              break;
+                                          }
+                                          
                                           int tamanho = comando.length();
                                           comando = comando.substring(0, tamanho-2);
                                           comando = comando.toUpperCase();
-                                          //System.out.println(comando);
+                                          System.out.println(comando);
                                           
                                         try{
                                             stmt.executeUpdate("insert into " + tabela + " values (" + comando + ")");
