@@ -24,19 +24,18 @@ public class TrabalhoBD {
 	 * @throws SQLException 
      */
 	
-	public static void printTable(ResultSet rs) throws SQLException {;
+    public static void printTable(ResultSet rs) throws SQLException {;
      	ResultSetMetaData meta = rs.getMetaData();
         int columnCount = meta.getColumnCount();
         
         for(int i = 1; i <= columnCount; i++) {
-        	System.out.print(String.format("%-20s", "| " + meta.getColumnName(i)));
+        	System.out.print(String.format("%-25s", "| " + meta.getColumnName(i)));
         }
-        String str = new String(new char[60]).replace("\0", "-");
-        System.out.println("\n" + str);
+        System.out.println("\n");
         
         while(rs.next()){
             for(int i = 1; i <= columnCount; i++)
-                System.out.print(String.format("%-20s", "| " + rs.getString(i)));
+                System.out.print(String.format("%-25s", "| " + rs.getString(i)));
             System.out.println("");
         }
         System.out.println("");      
@@ -87,8 +86,33 @@ public class TrabalhoBD {
                       
                       if(op == 1){
                           //listar tabelas
+                          System.out.println("FESTA\nREPUBLICA\nPROPRIETARIOREP\nUNIVERSITARIO\nMOTORISTA\nTRANSPORTE\nCONDUCAO\nTRAJETO\n"
+                                  + "SEGURANCA\nSEGURATRABALHA\nDJ\nDJPERFORMA\nFOODTRUCK\nCOMIDASFT\nPROPRIETARIOFT\nBEBIDA\nBEBIDASERVIDA\nPULSEIRA\n");
+                          
                       }else if(op == 2){
                           //consultar
+                          System.out.println("Digite o nome da tabela que deseja consultar:");
+                          String tabelaC = ler.next();
+                          tabelaC = tabelaC.toUpperCase();
+                          String comandoC = "SELECT * FROM " + tabelaC;
+                          System.out.println("Caso deseje restringir a consulta por alguma condicao, "
+                                  + "digite-a no formato ''coluna = condicao'' (sem aspas duplas, com aspas simples na condicao caso nao seja um numero)."
+                                  + "\nCaso contrario, digite '*'");
+                          
+                          String enter = ler.nextLine();
+                          String condicaoC = ler.nextLine();
+                          
+                          if(!condicaoC.equals("*")) comandoC += " WHERE " + condicaoC;
+                          comandoC = comandoC.toUpperCase();
+                          
+                          try{
+                              ResultSet res = stmt.executeQuery(comandoC);
+                              printTable(res);
+                          }catch(SQLException sqle){
+                              System.out.println("\nErro ao consultar\n");
+                          }
+                                                  
+                          
                       }else if(op == 3){
                     	  a = 0;
                       }else{
@@ -115,107 +139,191 @@ public class TrabalhoBD {
 		                 		+ "6-Voltar\n"
 		                 		+ "7-Sair");
 			          
-			          int op = ler.nextInt();
+			 int op = ler.nextInt();
 			          
-			          switch(op){
-			              case 1: //listar todas as tabelas
-			            	  //TODO Listar apenas tabelas pertinentes ao escopo de confraternizacao
-			            	  ResultSet rs = stmt.executeQuery("SELECT table_name, owner FROM all_tables WHERE owner= '" + user + "' ORDER BY owner, table_name");			            	      	  
-                                          while (rs.next()) {
-			            		    System.out.print(rs.getString(1) + " ");
-			            		    System.out.println();
-			            		}
-			            	  System.out.println();
+			 switch(op){
+			     case 1: //listar todas as tabelas
+			  	  //TODO Listar apenas tabelas pertinentes ao escopo de confraternizacao
+			     	  ResultSet rs = stmt.executeQuery("SELECT table_name, owner FROM all_tables WHERE owner= '" + user + "' ORDER BY owner, table_name");			            	      	  
+                                  while (rs.next()) {
+                                        System.out.print(rs.getString(1) + " ");
+			                System.out.println();
+			          }
+			          System.out.println();
 
-			            	  rs.close();
-			                  break;
+			          rs.close();
+			          break;
                                           
-			              case 2:
-			                  //consultar
-                                          System.out.println("1-Consultas gerais\n"
-                                                  + "2-Consultas avançacadas");
-                                          int c = ler.nextInt();
+			     case 2:
+			         //consultar
+                                 System.out.println("1-Consultas gerais\n"
+                                           + "2-Consultas avançacadas");
+                                 int c = ler.nextInt();
                                           
-                                          switch(c){
-                                              case 1:
-                                                  System.out.println("Digite o nome da tabela que deseja consultar:");
-                                                  String tabelaC = ler.next();
-                                                  tabelaC = tabelaC.toUpperCase();
-                                                  String comandoC = "SELECT * FROM " + tabelaC; 
+                                 switch(c){
+                                     case 1:
+                                        System.out.println("Digite o nome da tabela que deseja consultar:");
+                                        String tabelaC = ler.next();
+                                        tabelaC = tabelaC.toUpperCase();
+                                        String comandoC = "SELECT * FROM " + tabelaC; 
                                                   
-                                                  System.out.println("Caso deseje restringir a consulta por alguma condicao, "
-                                                          + "digite-a no formato 'coluna = condicao' (sem aspas). Caso contrario, digite '*'"); 
-                                                  String enter = ler.nextLine();
-                                                  String condicaoC = ler.nextLine();
+                                        System.out.println("Caso deseje restringir a consulta por alguma condicao, "
+                                                 + "digite-a no formato 'coluna = condicao' (sem aspas). Caso contrario, digite '*'"); 
+                                        String enter = ler.nextLine();
+                                        String condicaoC = ler.nextLine();
                                                   
-                                                  if(!condicaoC.equals("*")) comandoC += " WHERE " + condicaoC;
+                                        if(!condicaoC.equals("*")) comandoC += " WHERE " + condicaoC;
                                                   
-                                                  comandoC = comandoC.toUpperCase();
+                                        comandoC = comandoC.toUpperCase();
                                                   
-                                                  try{
-                                                    ResultSet res = stmt.executeQuery(comandoC);
+                                        try{
+                                            ResultSet res = stmt.executeQuery(comandoC);
+                                            printTable(res);
+                                                    
+                                        }catch(SQLException sqle){
+                                           System.out.println("\nErro ao consultar\n");
+                                        }
+                                                  
+                                         break;
+                                                  
+                                     case 2: 
+                                         System.out.println("Escoha qual consulta deseja realizar:\n"
+                                                 + "1-Quais sao os jogadores de determinada modalidade\n"
+                                                 + "2-Quem sao os motoristas que prestaram servico para determinada evento\n"
+                                                 + "3-Quais comidas foram servidas em determinada confraternização\n");
+                                         int ca = ler.nextInt(); 
+                                         ler.nextLine();
+                                         
+                                         switch(ca){
+                                             case 1: 
+                                                 System.out.println("Digite o nome da modalidade desejada:");
+                                                 String modalidade = ler.nextLine(); 
+                                                 System.out.println("Se desejar filtrar por time, digite seu nome. Caso contrario, digite *: ");
+                                                 String time = ler.nextLine(); 
+                                                 
+                                                 String comando;
+                                                 if(time.equals("*")) comando = "SELECT J.CPF, C.NOME FROM JOGADOR J, CONVIDADO C WHERE MODALIDADE = '"+ modalidade + "' AND J.CPF = C.CPF";
+                                                 else comando = "SELECT J.CPF, C.NOME FROM JOGADOR J, CONVIDADO C WHERE MODALIDADE = '"+ modalidade + "' AND TIME = '" +time+"' AND J.CPF = C.CPF";
+                                                 comando = comando.toUpperCase(); 
+                                                 
+                                                 try{
+                                                    ResultSet res = stmt.executeQuery(comando);
                                                     printTable(res);
                                                     
-                                                  }catch(SQLException sqle){
+                                                }catch(SQLException sqle){
                                                     System.out.println("\nErro ao consultar\n");
-                                                  }
-                                                  
-                                                  break;
-                                                  
-                                              case 2: 
-                                                  break;
-                                          }
+                                                }
+                                                 
+                                                 break; 
+                                             case 2:
+                                                 System.out.println("Digite o nome do evento desejado:"); 
+                                                 String conf = ler.nextLine();
+                                                 String comando2 = "SELECT M.CNH, M.NOME FROM MOTORISTA M JOIN CONDUCAO C ON  M.CNH = C.MOTORISTA " +
+                                                        "JOIN TRANSPORTE T ON C.TRANSPORTE = T.PLACA JOIN VIAGEM V ON V.TRANSPORTE = T.PLACA " +
+                                                        "JOIN CONFRATERNIZACAO CO ON CO.NOME = V.CONF AND CO.DATA = V.DATACONF " +
+                                                        "WHERE CO.NOME = '" + conf + "'";
+                                                 comando2 = comando2.toUpperCase(); 
+                                                 
+                                                 try{
+                                                    ResultSet res = stmt.executeQuery(comando2);
+                                                    printTable(res);
+                                                    
+                                                }catch(SQLException sqle){
+                                                    System.out.println("\nErro ao consultar\n");
+                                                }
+                                                 break;
+                                                 
+                                             case 3:
+                                                 System.out.println("Digite o nome da confraternizacao desejada:");
+                                                 String confr = ler.nextLine(); 
+                                                 String comando3 = "SELECT S.SALADA, A.ACOMP, PQ.PRATO " +
+                                                    "FROM SALADAS S FULL OUTER JOIN BUFFET B ON S.BUFFET = B.CNPJ " +
+                                                    "FULL OUTER JOIN PRATOSQUENTES PQ ON PQ.BUFFET = B.CNPJ " +
+                                                    "FULL OUTER JOIN ACOMPANHAMENTOS A ON A.BUFFET = B.CNPJ " +
+                                                    "JOIN COMIDACONF CC ON CC.BUFFET = B.CNPJ " +
+                                                    "JOIN CONFRATERNIZACAO C ON CC.CONF = C.NOME " +
+                                                    "WHERE C.NOME = '" + confr + "'";
+                                                 
+                                                 comando3 = comando3.toUpperCase(); 
+                                                 
+                                                 try{
+                                                    ResultSet res = stmt.executeQuery(comando3);
+                                                    printTable(res);
+                                                    
+                                                }catch(SQLException sqle){
+                                                    System.out.println("\nErro ao consultar\n");
+                                                }
+                                                 break;
+                                         }
+                                         break;
+                                 }
                                           
-			                  break;
-			              case 3:
-			                  //inserir tupla
-                                          System.out.println("Digite o nome da tabela onde deseja inserir um dado:");
-                                          String tabela = ler.next();
-                                          tabela = tabela.toUpperCase();
+			         break;
+			     case 3:
+			        //inserir tupla
+                                 System.out.println("Digite o nome da tabela onde deseja inserir um dado:");
+                                 String tabela = ler.next();
+                                 String limparbuffer = ler.nextLine();
+                                 tabela = tabela.toUpperCase();
                                           
-                                          ResultSet colunas = stmt.executeQuery("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tabela + "'");
-                                          String comando = new String(); 
-                                          boolean tipoU = true;
-                                          boolean tipoJ = true;
-                                          
-                                          while(colunas.next()){
-                                              System.out.println("Digite o seguinte dado no formato pedido:");
-                                              System.out.println(colunas.getString(2) + " " + colunas.getString(3) + " de tamanho " + colunas.getString(4));
+                                 ResultSet colunas = stmt.executeQuery("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tabela + "'");
+                                 String comando = new String(); 
+                                 boolean tipoU = true;
+                                 boolean tipoJ = true;
+                                         
+                                 while(colunas.next()){
+                                 //Para tratar a insercao da cor de medalha que é um atributo derivado de colocaocao
+                                 if(tabela.equals("MEDALHA") && colunas.getString(2).equals("COR")) continue; 
                                               
-                                              if(colunas.getString(3).equals("DATE")){
-                                                  System.out.println("Informe a data no formato DD/MM/YYYY");
-                                                  String atributo = ler.next();
-                                                  String ignorarenter = ler.nextLine();
-                                                  comando += "to_date('" + atributo + "', 'DD/MM/YYYY'), ";
-                                              } else if(colunas.getString(3).equals("FLOAT")){
-                                                  System.out.println("Numeros decimais devem ser inseridos com ponto");
-                                                  String atributo = ler.next();
-                                                  String ignorarenter = ler.nextLine();
-                                                  comando += atributo + ", ";
-                                              } else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOU")){
-                                                  System.out.println("Digite o numero 1 caso o convidado seja um universitario ou 0 caso nao seja");
-                                                  String atributo = ler.next(); 
-                                                  String ignorarenter = ler.nextLine();
-                                                  if(atributo.equals("1")) tipoU = true;
-                                                  else tipoU = false;
-                                                  comando += atributo + ", ";
-                                              }else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOJ")){
-                                                  System.out.println("Digite o numero 1 caso o convidado seja um jogador ou 0 caso nao seja");
-                                                  String atributo = ler.next();
-                                                  String ignorarenter = ler.nextLine();
-                                                  if(atributo.equals("1")) tipoJ = true;
-                                                  else tipoJ = false;
-                                                  comando += atributo + ", ";
-                                              }else if(colunas.getString(3).equals("NUMBER")){
-                                                  String atributo = ler.next();
-                                                  String ignorarenter = ler.nextLine();
-                                                  comando += atributo + ", ";
-                                              } else{
-                                                  String atributo = ler.nextLine();
-                                                  comando += "'"+ atributo + "', "; 
-                                              }
-                                          }
+                                 System.out.println("Digite o seguinte dado no formato pedido:");
+                                 System.out.println(colunas.getString(2) + " " + colunas.getString(3) + " de tamanho " + colunas.getString(4));
+                                              
+                                 //Para tratar a insercao da cor de medalha que é um atributo derivado de colocaocao
+                                 if(tabela.equals("MEDALHA") && colunas.getString(2).equals("COLOCACAO")){
+                                    String atributo = ler.next();
+                                    String ignorarenter = ler.nextLine();
+                                    comando += atributo + ", ";
+                                    if(atributo.equals("1")) comando += "'OURO', ";
+                                    else if(atributo.equals("2")) comando += "'PRATA', ";
+                                    else comando+= "'BRONZE', ";
+                                    continue;
+                                 }
+                                              
+                                 if(colunas.getString(3).equals("DATE")){
+                                     System.out.println("Informe a data no formato DD/MM/YYYY");
+                                     String atributo = ler.next();
+                                     String ignorarenter = ler.nextLine();
+                                     comando += "to_date('" + atributo + "', 'DD/MM/YYYY'), ";
+                                 } else if(colunas.getString(3).equals("FLOAT")){
+                                     System.out.println("Numeros decimais devem ser inseridos com ponto");
+                                     String atributo = ler.next();
+                                     String ignorarenter = ler.nextLine();
+                                     comando += atributo + ", ";
+                                 } else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOU")){
+                                     System.out.println("Digite o numero 1 caso o convidado seja um universitario ou 0 caso nao seja");
+                                     String atributo = ler.next(); 
+                                     String ignorarenter = ler.nextLine();
+                                     if(atributo.equals("1")) tipoU = true;
+                                     else tipoU = false;
+                                     comando += atributo + ", ";
+                                 }else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOJ")){
+                                     System.out.println("Digite o numero 1 caso o convidado seja um jogador ou 0 caso nao seja");
+                                     String atributo = ler.next();
+                                     String ignorarenter = ler.nextLine();
+                                     if(atributo.equals("1")) tipoJ = true;
+                                     else tipoJ = false;
+                                     comando += atributo + ", ";
+                                 }else if(colunas.getString(3).equals("NUMBER")){
+                                     String atributo = ler.next();
+                                     String ignorarenter = ler.nextLine();
+                                     comando += atributo + ", ";
+                                 } else{
+                                     String atributo = ler.nextLine();
+                                     comando += "'"+ atributo + "', "; 
+                                 }
+                            }
                                           
+                                          //Para tratar o problema de participacao total do convidado
                                           if(tabela.equals("CONVIDADO") && !(tipoU || tipoJ)){
                                               System.out.println("Erro ao inserir tupla.\n"
                                                       + "O convidado precisa ser Jogador ou Universitario\n"); 
