@@ -23,6 +23,25 @@ public class TrabalhoBD {
      * @param args the command line arguments
 	 * @throws SQLException 
      */
+	
+	public static void printTable(ResultSet rs) throws SQLException {;
+     	ResultSetMetaData meta = rs.getMetaData();
+        int columnCount = meta.getColumnCount();
+        
+        for(int i = 1; i <= columnCount; i++) {
+        	System.out.print(String.format("%-20s", "| " + meta.getColumnName(i)));
+        }
+        String str = new String(new char[60]).replace("\0", "-");
+        System.out.println("\n" + str);
+        
+        while(rs.next()){
+            for(int i = 1; i <= columnCount; i++)
+                System.out.print(String.format("%-20s", "| " + rs.getString(i)));
+            System.out.println("");
+        }
+        System.out.println("");      
+	}
+	
     public static void main(String[] args) throws SQLException {
     	
     	String user = "M9763151";
@@ -134,23 +153,9 @@ public class TrabalhoBD {
                                                   comandoC = comandoC.toUpperCase();
                                                   
                                                   try{
-                                                    ResultSet colunas = stmt.executeQuery("SELECT table_name, column_name FROM USER_TAB_COLUMNS WHERE table_name = '" + tabelaC + "'");
+                                                    ResultSet res = stmt.executeQuery(comandoC);
+                                                    printTable(res);
                                                     
-                                                    while(colunas.next()){
-                                                        System.out.print(colunas.getString(2) + "\t\t");
-                                                    }
-                                                    System.out.println("");
-                                                    
-                                                    ResultSet consulta = stmt.executeQuery(comandoC);
-                                                    ResultSetMetaData metadata = consulta.getMetaData();
-                                                    int columnCount = metadata.getColumnCount();
-                                                    
-                                                    while(consulta.next()){
-                                                        for(int i = 1; i <= columnCount; i++)
-                                                            System.out.print(consulta.getString(i) + "\t\t");
-                                                        System.out.println("");
-                                                    }
-                                                    System.out.println("");
                                                   }catch(SQLException sqle){
                                                     System.out.println("\nErro ao consultar\n");
                                                   }
