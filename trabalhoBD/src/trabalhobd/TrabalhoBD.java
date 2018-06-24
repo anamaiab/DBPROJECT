@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * @author Marina Kako
  * @author Marcelo de Moraes
- * @author Ana Boba
+ * @author Ana Maia
  */
 public class TrabalhoBD {
 	/**
@@ -157,7 +157,7 @@ public class TrabalhoBD {
 			     case 2:
 			         //consultar
                                  System.out.println("1-Consultas gerais\n"
-                                           + "2-Consultas avan√ßacadas");
+                                           + "2-Consultas avancadas");
                                  int c = ler.nextInt();
                                           
                                  switch(c){
@@ -190,8 +190,12 @@ public class TrabalhoBD {
                                          System.out.println("Escoha qual consulta deseja realizar:\n"
                                                  + "1-Quais sao os jogadores de determinada modalidade\n"
                                                  + "2-Quem sao os motoristas que prestaram servico para determinada evento\n"
-                                                 + "3-Quais comidas foram servidas em determinada confraterniza√ß√£o\n"
-                                                 + "4-Quantas pessoas vao a uma confraternizacao\n");
+                                                 + "3-Quais comidas foram servidas em determinada confraternizacao\n"
+                                                 + "4-Quantas pessoas vao a uma confraternizacao\n"
+                                                 + "5-Quais sao os locais disponiveis para realizar o evento em determinada data\n"
+                                                 + "6-Quais pessoas receberam medalha em uma determinada confraternizaÁ„o\n"
+                                                 + "7-Quais sao os convidados sao menores de idade de um determinado evento");
+                                 
                                          int ca = ler.nextInt(); 
                                          ler.nextLine();
                                          
@@ -269,6 +273,51 @@ public class TrabalhoBD {
                                                     System.out.println("\nErro ao consultar\n");
                                                 }
                                                  break;
+                                                 
+                                             case 5:       
+                                            	 System.out.println("Digite a data a ser realizado o evento:");
+                                            	 String eventoData = ler.nextLine();
+                                            	 String comando5 = "SELECT R.NOME AS NOME_REP, R.ENDERECO AS END_REP, R.PRECOH AS PRECOH_REP,"
+                                            	 		+ " R.LOTACAO AS LOTACAO_REP, R.TAMANHO AS TAMANHO_REP, F.NOME AS NOME_CASAFESTA, "
+                                            	 		+ "F.ENDERECO AS END_CASAFESTA, F.PRECOH AS PRECOH_CASAFESTA, F.LOTACAO AS LOTACAO_CASAFESTA, "
+                                            	 		+ "F.TAMANHO AS TAMANHO_CASAFESTA FROM REPUBLICA R, CASAFESTA F";
+                                            	 comando5 = comando5.toUpperCase();
+                                            	 try {
+                                            		 ResultSet res = stmt.executeQuery(comando5);
+                                                     printTable(res);
+                                            	 }catch(SQLException sqle){
+                                                     System.out.println("\nErro ao consultar\n");
+                                                 }
+                                            	 break;
+                                             case 6:
+                                            	 System.out.println("Digite o nome da confraternizacao desejada:");
+                                            	 String confra = ler.nextLine();
+                                            	 String comando6 = "SELECT C.NOME, J.CPF, M.MODALIDADE FROM CONVIDADO C, JOGADOR J, MEDALHA M, CONFRATERNIZACAO CO WHERE \r\n" + 
+                                            	 		"C.CPF = J.CPF AND M.CONF = CO.NOME AND M.DATA = CO.DATA AND M.JOGADOR = J.CPF AND M.CONF = '" + confra + "'";
+                                            	 comando6 = comando6.toUpperCase();
+                                            	 try {
+                                            		 ResultSet res = stmt.executeQuery(comando6);
+                                                     printTable(res);
+                                            	 }catch(SQLException sqle){
+                                                     System.out.println("\nErro ao consultar\n");
+                                                 }
+                                            	 break;
+                                             case 7:
+                                            	 System.out.println("Digite o nome do evento desejado:");
+                                            	 String event = ler.nextLine();
+                                            	 String comando7 = "SELECT C.NOME, P.CONVIDADO FROM CONVIDADO C, PULSEIRA P, EVENTO E WHERE "
+                                            	 		+ "P.CONVIDADO = C.CPF AND P.EVENTO = E.NOME AND P.DATA = E.DATA AND P.COR = 'VERMELHO' AND E.NOME = '"
+                                            	 		+ event + "'";
+                                            	 comando7 = comando7.toUpperCase();
+                                            	 try {
+                                            		 ResultSet res = stmt.executeQuery(comando7);
+                                                     printTable(res);
+                                            	 }catch(SQLException sqle){
+                                                     System.out.println("\nErro ao consultar\n");
+                                                 }
+                                            	 break;
+                                            	 
+                                                 
                                          }
                                          break;
                                  }
