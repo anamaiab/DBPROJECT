@@ -191,9 +191,9 @@ public class TrabalhoBD {
                                                  + "1-Quais sao os jogadores de determinada modalidade\n"
                                                  + "2-Quem sao os motoristas que prestaram servico para determinada evento\n"
                                                  + "3-Quais comidas foram servidas em determinada confraternizacao\n"
-                                                 + "4-Quantas pessoas vao a uma confraternizacao\n"
+                                                 + "4-Quantas pessoas vao a cada confraternizacao\n"
                                                  + "5-Quais sao os locais disponiveis para realizar o evento em determinada data\n"
-                                                 + "6-Quais pessoas receberam medalha em uma determinada confraternização\n"
+                                                 + "6-Quais pessoas receberam medalha em uma determinada confraternizaï¿½ï¿½o\n"
                                                  + "7-Quais sao os convidados sao menores de idade de um determinado evento");
                                  
                                          int ca = ler.nextInt(); 
@@ -260,9 +260,8 @@ public class TrabalhoBD {
                                                 }
                                                  break;
                                              case 4:
-                                                 System.out.println("Digite o nome da confraternizacao desejada:");
-                                                 String con = ler.nextLine();
-                                                 String comando4 = "SELECT COUNT(*) AS NCONVIDADOS FROM PULSEIRA WHERE EVENTO = '" + con + "'";
+                                                 
+                                                 String comando4 = "SELECT P.EVENTO, COUNT(*) AS NCONVIDADOS FROM PULSEIRA P JOIN CONFRATERNIZACAO C ON P.EVENTO = C.NOME AND P.DATA = C.DATA GROUP BY P.EVENTO, P.DATA";
                                                  comando4 = comando4.toUpperCase();
                                                  
                                                  try{
@@ -275,12 +274,10 @@ public class TrabalhoBD {
                                                  break;
                                                  
                                              case 5:       
-                                            	 System.out.println("Digite a data a ser realizado o evento:");
+                                            	 System.out.println("Digite a data a ser realizado o evento no formato dd/mm/yyyy:");
                                             	 String eventoData = ler.nextLine();
-                                            	 String comando5 = "SELECT R.NOME AS NOME_REP, R.ENDERECO AS END_REP, R.PRECOH AS PRECOH_REP,"
-                                            	 		+ " R.LOTACAO AS LOTACAO_REP, R.TAMANHO AS TAMANHO_REP, F.NOME AS NOME_CASAFESTA, "
-                                            	 		+ "F.ENDERECO AS END_CASAFESTA, F.PRECOH AS PRECOH_CASAFESTA, F.LOTACAO AS LOTACAO_CASAFESTA, "
-                                            	 		+ "F.TAMANHO AS TAMANHO_CASAFESTA FROM REPUBLICA R, CASAFESTA F";
+                                            	 String comando5 = "SELECT F.NOME AS NOME_CASAFESTA, F.ENDERECO AS END_CASAFESTA, F.PRECOH AS PRECOH_CASAFESTA, F.LOTACAO AS LOTACAO_CASAFESTA, "
+                                                         + "F.TAMANHO AS TAMANHO_CASAFESTA FROM CASAFESTA F JOIN CONFRATERNIZACAO C ON F.NOME = C.CASAFESTA WHERE C.DATA <> to_date('" + eventoData + "', 'dd/mm/yyyy')";
                                             	 comando5 = comando5.toUpperCase();
                                             	 try {
                                             		 ResultSet res = stmt.executeQuery(comando5);
