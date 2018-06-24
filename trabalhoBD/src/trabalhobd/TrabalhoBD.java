@@ -24,15 +24,18 @@ public class TrabalhoBD {
 	 * @throws SQLException 
      */
 	
-    public static void printTable(ResultSet rs) throws SQLException {;
+    //funcao que printa na tela a tabela requisitada
+	public static void printTable(ResultSet rs) throws SQLException {;
      	ResultSetMetaData meta = rs.getMetaData();
         int columnCount = meta.getColumnCount();
         
+        //imprime cabecalho da tabela
         for(int i = 1; i <= columnCount; i++) {
         	System.out.print(String.format("%-25s", "| " + meta.getColumnName(i)));
         }
         System.out.println("\n");
-        
+       
+        //imprime conteudo da tabela
         while(rs.next()){
             for(int i = 1; i <= columnCount; i++)
                 System.out.print(String.format("%-25s", "| " + rs.getString(i)));
@@ -43,6 +46,7 @@ public class TrabalhoBD {
 	
     public static void main(String[] args) throws SQLException {
     	
+    	//login padrao utilizado no trabalho
     	String user = "M9763151";
     	String pass = "123456";
     	String url = "jdbc:oracle:thin:@grad.icmc.usp.br:15215:orcl";
@@ -161,7 +165,7 @@ public class TrabalhoBD {
                                  int c = ler.nextInt();
                                           
                                  switch(c){
-                                     case 1:
+                                     case 1: //consultas gerais
                                         System.out.println("Digite o nome da tabela que deseja consultar:");
                                         String tabelaC = ler.next();
                                         tabelaC = tabelaC.toUpperCase();
@@ -186,7 +190,7 @@ public class TrabalhoBD {
                                                   
                                          break;
                                                   
-                                     case 2: 
+                                     case 2: //consultas avancadas 
                                          System.out.println("Escoha qual consulta deseja realizar:\n"
                                                  + "1-Quais sao os jogadores de determinada modalidade\n"
                                                  + "2-Quem sao os motoristas que prestaram servico para determinada evento\n"

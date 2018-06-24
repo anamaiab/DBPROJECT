@@ -39,6 +39,7 @@ public class Connect {
 		this.url = url;
 	}
 	
+	//realiza conexao
 	public Statement makeConnection() {
 		System.out.println("Conectando...");
 		
@@ -54,6 +55,7 @@ public class Connect {
 		return stmt;	
 	}
 	
+	//fecha conexao
 	public void close() {
 		try {
 			c.close();
