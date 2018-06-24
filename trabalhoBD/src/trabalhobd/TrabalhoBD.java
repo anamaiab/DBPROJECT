@@ -190,7 +190,8 @@ public class TrabalhoBD {
                                          System.out.println("Escoha qual consulta deseja realizar:\n"
                                                  + "1-Quais sao os jogadores de determinada modalidade\n"
                                                  + "2-Quem sao os motoristas que prestaram servico para determinada evento\n"
-                                                 + "3-Quais comidas foram servidas em determinada confraternização\n");
+                                                 + "3-Quais comidas foram servidas em determinada confraternização\n"
+                                                 + "4-Quantas pessoas vao a uma confraternizacao\n");
                                          int ca = ler.nextInt(); 
                                          ler.nextLine();
                                          
@@ -254,6 +255,20 @@ public class TrabalhoBD {
                                                     System.out.println("\nErro ao consultar\n");
                                                 }
                                                  break;
+                                             case 4:
+                                                 System.out.println("Digite o nome da confraternizacao desejada:");
+                                                 String con = ler.nextLine();
+                                                 String comando4 = "SELECT COUNT(*) AS NCONVIDADOS FROM PULSEIRA WHERE EVENTO = '" + con + "'";
+                                                 comando4 = comando4.toUpperCase();
+                                                 
+                                                 try{
+                                                    ResultSet res = stmt.executeQuery(comando4);
+                                                    printTable(res);
+                                                    
+                                                }catch(SQLException sqle){
+                                                    System.out.println("\nErro ao consultar\n");
+                                                }
+                                                 break;
                                          }
                                          break;
                                  }
@@ -273,54 +288,54 @@ public class TrabalhoBD {
                                          
                                  while(colunas.next()){
                                  //Para tratar a insercao da cor de medalha que é um atributo derivado de colocaocao
-                                 if(tabela.equals("MEDALHA") && colunas.getString(2).equals("COR")) continue; 
+                                    if(tabela.equals("MEDALHA") && colunas.getString(2).equals("COR")) continue; 
                                               
-                                 System.out.println("Digite o seguinte dado no formato pedido:");
-                                 System.out.println(colunas.getString(2) + " " + colunas.getString(3) + " de tamanho " + colunas.getString(4));
+                                    System.out.println("Digite o seguinte dado no formato pedido:");
+                                    System.out.println(colunas.getString(2) + " " + colunas.getString(3) + " de tamanho " + colunas.getString(4));
                                               
-                                 //Para tratar a insercao da cor de medalha que é um atributo derivado de colocaocao
-                                 if(tabela.equals("MEDALHA") && colunas.getString(2).equals("COLOCACAO")){
-                                    String atributo = ler.next();
-                                    String ignorarenter = ler.nextLine();
-                                    comando += atributo + ", ";
-                                    if(atributo.equals("1")) comando += "'OURO', ";
-                                    else if(atributo.equals("2")) comando += "'PRATA', ";
-                                    else comando+= "'BRONZE', ";
-                                    continue;
-                                 }
-                                              
-                                 if(colunas.getString(3).equals("DATE")){
-                                     System.out.println("Informe a data no formato DD/MM/YYYY");
-                                     String atributo = ler.next();
-                                     String ignorarenter = ler.nextLine();
-                                     comando += "to_date('" + atributo + "', 'DD/MM/YYYY'), ";
-                                 } else if(colunas.getString(3).equals("FLOAT")){
-                                     System.out.println("Numeros decimais devem ser inseridos com ponto");
-                                     String atributo = ler.next();
-                                     String ignorarenter = ler.nextLine();
-                                     comando += atributo + ", ";
-                                 } else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOU")){
-                                     System.out.println("Digite o numero 1 caso o convidado seja um universitario ou 0 caso nao seja");
-                                     String atributo = ler.next(); 
-                                     String ignorarenter = ler.nextLine();
-                                     if(atributo.equals("1")) tipoU = true;
-                                     else tipoU = false;
-                                     comando += atributo + ", ";
-                                 }else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOJ")){
-                                     System.out.println("Digite o numero 1 caso o convidado seja um jogador ou 0 caso nao seja");
-                                     String atributo = ler.next();
-                                     String ignorarenter = ler.nextLine();
-                                     if(atributo.equals("1")) tipoJ = true;
-                                     else tipoJ = false;
-                                     comando += atributo + ", ";
-                                 }else if(colunas.getString(3).equals("NUMBER")){
-                                     String atributo = ler.next();
-                                     String ignorarenter = ler.nextLine();
-                                     comando += atributo + ", ";
-                                 } else{
-                                     String atributo = ler.nextLine();
-                                     comando += "'"+ atributo + "', "; 
-                                 }
+                                    //Para tratar a insercao da cor de medalha que é um atributo derivado de colocaocao
+                                     if(tabela.equals("MEDALHA") && colunas.getString(2).equals("COLOCACAO")){
+                                        String atributo = ler.next();
+                                        String ignorarenter = ler.nextLine();
+                                        comando += atributo + ", ";
+                                        if(atributo.equals("1")) comando += "'OURO', ";
+                                        else if(atributo.equals("2")) comando += "'PRATA', ";
+                                        else comando+= "'BRONZE', ";
+                                        continue;
+                                     }
+
+                                     if(colunas.getString(3).equals("DATE")){
+                                         System.out.println("Informe a data no formato DD/MM/YYYY");
+                                         String atributo = ler.next();
+                                         String ignorarenter = ler.nextLine();
+                                         comando += "to_date('" + atributo + "', 'DD/MM/YYYY'), ";
+                                     } else if(colunas.getString(3).equals("FLOAT")){
+                                         System.out.println("Numeros decimais devem ser inseridos com ponto");
+                                         String atributo = ler.next();
+                                         String ignorarenter = ler.nextLine();
+                                         comando += atributo + ", ";
+                                     } else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOU")){
+                                         System.out.println("Digite o numero 1 caso o convidado seja um universitario ou 0 caso nao seja");
+                                         String atributo = ler.next(); 
+                                         String ignorarenter = ler.nextLine();
+                                         if(atributo.equals("1")) tipoU = true;
+                                         else tipoU = false;
+                                         comando += atributo + ", ";
+                                     }else if(tabela.equals("CONVIDADO") && colunas.getString(2).equals("TIPOJ")){
+                                         System.out.println("Digite o numero 1 caso o convidado seja um jogador ou 0 caso nao seja");
+                                         String atributo = ler.next();
+                                         String ignorarenter = ler.nextLine();
+                                         if(atributo.equals("1")) tipoJ = true;
+                                         else tipoJ = false;
+                                         comando += atributo + ", ";
+                                     }else if(colunas.getString(3).equals("NUMBER")){
+                                         String atributo = ler.next();
+                                         String ignorarenter = ler.nextLine();
+                                         comando += atributo + ", ";
+                                     } else{
+                                         String atributo = ler.nextLine();
+                                         comando += "'"+ atributo + "', "; 
+                                     }
                             }
                                           
                                           //Para tratar o problema de participacao total do convidado
